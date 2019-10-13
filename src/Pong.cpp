@@ -4,12 +4,15 @@ const int winW = 450;
 const int winH = 640;
 const int thickness = 40;
 const float paddleSize = 300.0f;
+const float paddleStep = 300.0f;
 
 
 Pong::Pong()
 :window(nullptr)
 ,renderer(nullptr)
+,ticksCount(0)
 ,isRunning(true)
+,paddleDir(0)
 {
 
 }
@@ -83,10 +86,47 @@ void Pong::ProcessInput()
     {
         isRunning = false;
     }
+    
+    paddleDir = 0;
+    if (state[SDL_SCANCODE_RIGHT])
+    {
+        paddleDir += 1;
+    }
+    if (state[SDL_SCANCODE_LEFT])
+    {
+        paddleDir -= 1;
+    }
 }
 
 void Pong::UpdateGame()
 {
+    //Wait till 16ms passes
+    while (!SDL_TICKS_PASSED(SDL_GetTicks(), ticksCount + 16))
+        ;
+    
+    float deltaTime = (SDL_GetTicks() - ticksCount) / 1000.0f;
+    //The maximum deltaTime
+    if (deltaTime > 0.05f)
+    {
+        deltaTime = 0.05f;
+    }
+    //Update ticks
+    ticksCount = SDL_GetTicks();
+    
+    //Move paddle
+    if (paddleDir != 0)
+    {
+        paddlePos.x += paddleDir * paddleStep * deltaTime;
+        //Constraints
+        if (paddlePos.x < (paddleSize/2.0f + thickness))
+        {
+            paddlePos.x = paddleSize/2.0f + thickness;
+        }
+        else if (paddlePos.x > (winW - paddleSize/2.0f - thickness))
+        {
+            paddlePos.x = winW - paddleSize/2.0f - thickness;
+        }
+    }
     
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include <iostream>
 
 struct Vec2
 {
@@ -23,7 +24,10 @@ private:
     SDL_Window* window;
     SDL_Renderer* renderer;
     
+    Uint32 ticksCount;
+    
     bool isRunning;
+    int paddleDir;
     Vec2 paddlePos;
     Vec2 ballPos;
 };
