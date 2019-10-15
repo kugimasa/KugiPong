@@ -45,7 +45,9 @@ bool Pong::Initialize()
     paddlePos.x = winW/2.0f;
     paddlePos.y = winH - thickness;
     ballPos.x = winW/2.0f;
-    ballPos.y = winH/2.0f;
+    ballPos.y = winH/2.0f - 100.0f;
+    ballVel.x = 235.0f;
+    ballVel.y = 200.0f;
     
     return true;
 }
@@ -128,6 +130,46 @@ void Pong::UpdateGame()
         }
     }
     
+    //Move ball
+    ballPos.x += ballVel.x * deltaTime;
+    ballPos.y += ballVel.y * deltaTime;
+    
+    //Collision
+    //Paddle
+    float diff = paddlePos.x - ballPos.x;
+    diff = (diff > 0.0f) ? diff : -diff;
+    if (diff <= paddleSize/2.0f &&
+        paddlePos.y - 3.0f <= ballPos.y &&
+        ballPos.y <= paddlePos.y &&
+        ballVel.y > 0.0f)
+    {
+        ballVel.y *= -1.0f;
+    }
+    //TopWall
+    if (ballPos.y <= thickness * 1.5f && ballVel.y < 0.0f)
+    {
+        ballVel.y *= -1;
+    }
+    //RightWall
+    else if (ballPos.x >= (winW - thickness) && ballVel.x > 0.0f)
+    {
+        ballVel.x *= -1;
+    }
+    //LeftWall
+    else if (ballPos.x <= thickness * 1.5f && ballVel.x < 0.0f)
+    {
+        ballVel.x *= -1;
+    }
+    
+    //Ball Out
+    if(ballPos.y >= winH)
+    {
+        ballPos.x = winW/2.0f;
+        ballPos.y = winH/2.0f - 100.0f;
+        ballVel.x = 235.0f;
+        ballVel.y = 200.0f;
+    }
+    
 }
 
 void Pong::GenerateOutput()
@@ -152,14 +194,14 @@ void Pong::GenerateOutput()
     };
     SDL_RenderFillRect(renderer, &wall);
     
-    //Draw right wall
+    //Draw left wall
     wall.x = 0;
     wall.y = 0;
     wall.w = thickness;
     wall.h = winH;
     SDL_RenderFillRect(renderer, &wall);
     
-    //Draw left wall
+    //Draw right wall
     wall.x = winW - thickness;
     wall.y = 0;
     wall.w = thickness;
@@ -181,8 +223,8 @@ void Pong::GenerateOutput()
     SDL_Rect ball{
         static_cast<int>(ballPos.x - thickness/2),
         static_cast<int>(ballPos.y - thickness/2),
-        thickness,
-        thickness
+        thickness/2,
+        thickness/2
     };
     SDL_RenderFillRect(renderer, &ball);
     

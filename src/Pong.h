@@ -30,4 +30,5 @@ private:
     int paddleDir;
     Vec2 paddlePos;
     Vec2 ballPos;
+    Vec2 ballVel;
 };
