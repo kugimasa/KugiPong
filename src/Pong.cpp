@@ -3,8 +3,9 @@
 const int winW = 450;
 const int winH = 640;
 const int thickness = 40;
-const float paddleSize = 300.0f;
 const float paddleStep = 300.0f;
+float paddleSize = 300.0f;
+const float damageStep = 50.0f;
 
 
 Pong::Pong()
@@ -138,27 +139,26 @@ void Pong::UpdateGame()
     //Paddle
     float diff = paddlePos.x - ballPos.x;
     diff = (diff > 0.0f) ? diff : -diff;
-    if (diff <= paddleSize/2.0f &&
-        paddlePos.y - 3.0f <= ballPos.y &&
-        ballPos.y <= paddlePos.y &&
-        ballVel.y > 0.0f)
+    if (diff <= paddleSize/2.0f && paddlePos.y - 3.0f <= ballPos.y &&
+        ballPos.y <= paddlePos.y && ballVel.y > 0.0f)
     {
         ballVel.y *= -1.0f;
+        paddleSize -= damageStep;
     }
     //TopWall
     if (ballPos.y <= thickness * 1.5f && ballVel.y < 0.0f)
     {
-        ballVel.y *= -1;
+        ballVel.y *= -1.0f;
     }
     //RightWall
     else if (ballPos.x >= (winW - thickness) && ballVel.x > 0.0f)
     {
-        ballVel.x *= -1;
+        ballVel.x *= -1.0f;
     }
     //LeftWall
     else if (ballPos.x <= thickness * 1.5f && ballVel.x < 0.0f)
     {
-        ballVel.x *= -1;
+        ballVel.x *= -1.0f;
     }
     
     //Ball Out
@@ -231,4 +231,3 @@ void Pong::GenerateOutput()
     //Swap front-buffer and back-buffer
     SDL_RenderPresent(renderer);
 }
-
